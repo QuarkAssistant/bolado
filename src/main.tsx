@@ -1,9 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import DailyApp from "./DailyApp";
+import "./styles/tokens.css";
+import "./styles/components.css";
+import "./styles/app.css";
+import RunApp from "./RunApp";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <DailyApp />
+    <RunApp />
   </StrictMode>,
 );
