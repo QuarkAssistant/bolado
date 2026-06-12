@@ -130,10 +130,98 @@ export function TopBar({ run }: { run: RunState }) {
 }
 
 // ---------------------------------------------------------------------------
-// Home
+// Home + onboarding
 // ---------------------------------------------------------------------------
 
+const ONBOARDING_KEY = "bolado-run-onboarding-v1";
+
+function onboardingSeen(): boolean {
+  try {
+    return window.localStorage.getItem(ONBOARDING_KEY) === "1";
+  } catch {
+    return true; // storage blocked → never nag
+  }
+}
+
+function markOnboardingSeen(): void {
+  try {
+    window.localStorage.setItem(ONBOARDING_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+}
+
+const ONBOARDING_PANELS = [
+  {
+    emoji: "🎲",
+    title: "O Mercado",
+    text: "Monte seu time banca por banca no Mercado — role o dado e contrate UMA lenda por parada.",
+  },
+  {
+    emoji: "🃏",
+    title: "Cartas de Boleiro",
+    text: "As Cartas de Boleiro mudam as regras do jogo — combine-as e monte o seu motor.",
+  },
+  {
+    emoji: "🏆",
+    title: "A Taça",
+    text: "Sobreviva ao grupo, derrube os monstros do mata-mata e chegue à FINAL da América.",
+  },
+] as const;
+
+function OnboardingOverlay({ onClose }: { onClose: () => void }) {
+  const [panel, setPanel] = useState(0);
+  const current = ONBOARDING_PANELS[panel]!;
+  const last = panel === ONBOARDING_PANELS.length - 1;
+
+  return (
+    <div
+      className="run-onboarding"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Como jogar Bolado"
+      data-testid="run-onboarding"
+    >
+      <div className="run-onboarding__card bld-grain">
+        <span className="run-onboarding__emoji" aria-hidden="true">
+          {current.emoji}
+        </span>
+        <span className="bld-strap bld-strap--gold">
+          <span>{current.title}</span>
+        </span>
+        <p className="run-onboarding__text">{current.text}</p>
+        <div className="run-onboarding__dots" aria-hidden="true">
+          {ONBOARDING_PANELS.map((_, i) => (
+            <span key={i} className={`bld-pip${i === panel ? " bld-pip--current" : ""}`} />
+          ))}
+        </div>
+        <div className="run-panel__actions" style={{ justifyContent: "center" }}>
+          <button
+            type="button"
+            className="bld-btn bld-btn--primary"
+            data-testid="run-onboarding-next"
+            onClick={() => (last ? onClose() : setPanel(panel + 1))}
+          >
+            <span>{last ? "Bora ▶" : "Próximo ▶"}</span>
+          </button>
+          {!last && (
+            <button type="button" className="run-linkbtn" onClick={onClose}>
+              Pular
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function HomeScreen({ onStart }: { onStart: () => void }) {
+  const [showOnboarding, setShowOnboarding] = useState(() => !onboardingSeen());
+  const closeOnboarding = useCallback(() => {
+    markOnboardingSeen();
+    setShowOnboarding(false);
+  }, []);
+
   return (
     <div className="run-home">
       <h1 className="run-home__wordmark">
@@ -146,10 +234,24 @@ function HomeScreen({ onStart }: { onStart: () => void }) {
         Monte um time de lendas, sobreviva ao grupo e derrube os monstros do
         mata-mata. Perdeu? Bora de novo.
       </p>
-      <button type="button" className="bld-btn bld-btn--primary bld-btn--big" onClick={onStart}>
+      <button
+        type="button"
+        className="bld-btn bld-btn--primary bld-btn--big"
+        data-testid="run-start"
+        onClick={onStart}
+      >
         <span>Bora ▶</span>
       </button>
       <span className="bld-label">Run livre · a Run Diária chega em breve</span>
+      <button
+        type="button"
+        className="run-helpbtn"
+        aria-label="Como jogar"
+        onClick={() => setShowOnboarding(true)}
+      >
+        ?
+      </button>
+      {showOnboarding && <OnboardingOverlay onClose={closeOnboarding} />}
     </div>
   );
 }
@@ -459,56 +561,108 @@ function diagnosis(run: RunState): string {
   return `O que faltou: força ${r.userStrength.overall} contra ${r.opponentRating} — o elenco parou de crescer.`;
 }
 
+/** The card-combo line — the build the player will brag (or grumble) about. */
+function motorLine(run: RunState): string {
+  if (run.cards.length === 0) return "Na raça, sem carta nenhuma.";
+  return `Seu motor: ${run.cards.map((c) => `${c.emoji} ${c.name}`).join(" + ")}`;
+}
+
+/** Stage reached, for the death framing ("Caiu nas Oitavas de Final"). */
+function stageReached(run: RunState): string {
+  const record = run.matchHistory[run.matchHistory.length - 1];
+  const stage = record && run.competition.stages.find((s) => s.id === record.stageId);
+  return stage ? stage.label : "—";
+}
+
+/** Share stub (real sharing lands in Phase D): native share or clipboard. */
+function ShareStubButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const share = useCallback(async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+        return;
+      }
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* user cancelled or clipboard blocked — quiet stub */
+    }
+  }, [text]);
+  return (
+    <button type="button" className="bld-btn bld-btn--secondary" onClick={share}>
+      <span>{copied ? "Copiado!" : "Compartilhar"}</span>
+    </button>
+  );
+}
+
 function DeathScreen({ run, onRestart }: { run: RunState; onRestart: () => void }) {
   const record = run.matchHistory[run.matchHistory.length - 1];
+  const shareText = `Bolado — eliminado: ${stageReached(run)} · ${run.score} pts. Bora de novo? https://bolado.pages.dev`;
   return (
-    <div className="bld-screen bld-screen--death">
+    <div className="bld-screen bld-screen--death" data-testid="run-death">
       <span className="bld-strap bld-strap--danger">
         <span>Fim da run</span>
       </span>
       <p className="bld-screen__title">Eliminado</p>
       <span className="bld-screen__scoreline">{run.score} pts</span>
-      {record && (
-        <span className="bld-label">
-          {record.result.userGoals}–{record.result.opponentGoals} vs{" "}
-          {run.competition.stages.find((s) => s.id === record.stageId)?.opponent.name}
-        </span>
-      )}
+      <span className="bld-label">
+        Caiu em: {stageReached(run)}
+        {record &&
+          ` · ${record.result.userGoals}–${record.result.opponentGoals} vs ${
+            run.competition.stages.find((s) => s.id === record.stageId)?.opponent.name
+          }`}
+      </span>
       <p className="bld-screen__verdict">{diagnosis(run)}</p>
-      {run.cards.length > 0 && (
-        <span className="bld-label">Build: {run.cards.map((c) => c.name).join(" + ")}</span>
-      )}
+      <span className="bld-label run-motor">{motorLine(run)}</span>
       <button
         type="button"
         className="bld-btn bld-btn--primary bld-btn--big"
+        data-testid="run-restart"
         onClick={onRestart}
       >
         <span>Bora de novo</span>
       </button>
+      <ShareStubButton text={shareText} />
+    </div>
+  );
+}
+
+/** CSS confetti: 18 chalk/gold/green flecks raining for ≤2s (reduced-motion: none). */
+function Confetti() {
+  return (
+    <div className="run-confetti bld-anim" aria-hidden="true">
+      {Array.from({ length: 18 }, (_, i) => (
+        <span key={i} className="run-confetti__bit" />
+      ))}
     </div>
   );
 }
 
 function GloryScreen({ run, onRestart }: { run: RunState; onRestart: () => void }) {
+  const shareText = `Bolado — CAMPEÃO da Libertadores · ${run.score} pts. A taça é nossa. https://bolado.pages.dev`;
   return (
-    <div className="bld-screen bld-screen--glory">
+    <div className="bld-screen bld-screen--glory" data-testid="run-glory">
+      <Confetti />
       <span className="bld-strap bld-strap--gold">
-        <span>Campeão</span>
+        <span>Campeão da América</span>
       </span>
-      <p className="bld-screen__title">Glória eterna</p>
+      <p className="bld-screen__title">A taça é nossa</p>
+      <span className="run-trophy" aria-hidden="true">
+        🏆
+      </span>
       <span className="bld-screen__scoreline">{run.score} pts</span>
-      <p className="bld-screen__verdict">
-        {run.cards.length > 0
-          ? `Build: ${run.cards.map((c) => c.name).join(" + ")}`
-          : "Na raça, sem carta nenhuma."}
-      </p>
+      <p className="bld-screen__verdict">{motorLine(run)}</p>
       <button
         type="button"
         className="bld-btn bld-btn--primary bld-btn--big"
+        data-testid="run-restart"
         onClick={onRestart}
       >
         <span>Bora de novo</span>
       </button>
+      <ShareStubButton text={shareText} />
     </div>
   );
 }

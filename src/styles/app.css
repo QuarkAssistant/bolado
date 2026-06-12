@@ -201,6 +201,152 @@ body {
   max-width: 34ch;
 }
 
+.run-helpbtn {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--bld-radius-pill);
+  background: var(--bld-field-800);
+  border: 1px solid var(--bld-field-600);
+  color: var(--bld-flood-300);
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-black);
+  font-size: 1.2rem;
+  line-height: 1;
+}
+.run-helpbtn:hover {
+  border-color: var(--bld-flood-500);
+  color: var(--bld-flood-0);
+}
+.run-helpbtn:focus-visible {
+  outline: 3px solid var(--bld-gold-300);
+  outline-offset: 2px;
+}
+
+/* ---- ONBOARDING ------------------------------------------------- */
+
+.run-onboarding {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(4, 16, 11, 0.88);
+}
+.run-onboarding__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  width: min(420px, 100%);
+  padding: 28px 22px 24px;
+  border-radius: var(--bld-radius-ui);
+  background: var(--bld-surface);
+  border: 1px solid var(--bld-line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+.run-onboarding__emoji {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+.run-onboarding__text {
+  margin: 0;
+  max-width: 32ch;
+  font-size: 1rem;
+  font-weight: var(--bld-weight-semibold);
+  line-height: 1.45;
+  color: var(--bld-flood-300);
+}
+.run-onboarding__dots {
+  display: flex;
+  gap: 10px;
+}
+.run-onboarding__dots .bld-pip {
+  width: 10px;
+  height: 10px;
+}
+
+/* ---- DEATH / GLORY extras --------------------------------------- */
+
+.run-motor {
+  color: var(--bld-flood-300);
+}
+.run-trophy {
+  font-size: 4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 24px rgba(234, 183, 72, 0.55));
+}
+
+/* CSS confetti — gold/chalk/green flecks, one ≤2s rain, none under
+   reduced motion (the .bld-anim kill-switch zeroes the animation). */
+.run-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.run-confetti__bit {
+  position: absolute;
+  top: -12px;
+  width: 8px;
+  height: 14px;
+  opacity: 0;
+  background: var(--bld-gold-400);
+}
+.run-confetti.bld-anim .run-confetti__bit {
+  animation: run-confetti-fall 1.6s var(--bld-ease-in-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .run-confetti__bit {
+    display: none;
+  }
+}
+@keyframes run-confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(110vh) rotate(540deg);
+  }
+}
+.run-confetti__bit:nth-child(3n) {
+  background: var(--bld-flood-100);
+  width: 6px;
+  height: 10px;
+}
+.run-confetti__bit:nth-child(4n) {
+  background: var(--bld-field-400);
+}
+.run-confetti__bit:nth-child(1) { left: 4%; animation-delay: 0.05s; }
+.run-confetti__bit:nth-child(2) { left: 10%; animation-delay: 0.3s; }
+.run-confetti__bit:nth-child(3) { left: 16%; animation-delay: 0.12s; }
+.run-confetti__bit:nth-child(4) { left: 22%; animation-delay: 0.4s; }
+.run-confetti__bit:nth-child(5) { left: 28%; animation-delay: 0.02s; }
+.run-confetti__bit:nth-child(6) { left: 34%; animation-delay: 0.22s; }
+.run-confetti__bit:nth-child(7) { left: 40%; animation-delay: 0.34s; }
+.run-confetti__bit:nth-child(8) { left: 46%; animation-delay: 0.08s; }
+.run-confetti__bit:nth-child(9) { left: 52%; animation-delay: 0.28s; }
+.run-confetti__bit:nth-child(10) { left: 58%; animation-delay: 0.16s; }
+.run-confetti__bit:nth-child(11) { left: 64%; animation-delay: 0.38s; }
+.run-confetti__bit:nth-child(12) { left: 70%; animation-delay: 0.06s; }
+.run-confetti__bit:nth-child(13) { left: 76%; animation-delay: 0.26s; }
+.run-confetti__bit:nth-child(14) { left: 82%; animation-delay: 0.14s; }
+.run-confetti__bit:nth-child(15) { left: 88%; animation-delay: 0.36s; }
+.run-confetti__bit:nth-child(16) { left: 94%; animation-delay: 0.1s; }
+.run-confetti__bit:nth-child(17) { left: 7%; animation-delay: 0.44s; }
+.run-confetti__bit:nth-child(18) { left: 49%; animation-delay: 0.46s; }
+
 /* ---- MERCADO --------------------------------------------------- */
 
 .run-dice-row {
