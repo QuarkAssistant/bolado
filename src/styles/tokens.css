@@ -1,0 +1,182 @@
+/* ============================================================
+   BOLADO v2 — DESIGN TOKENS
+   Identity: "NOITE DE JOGO" — Brazilian football night.
+   Stadium floodlight contrast: deep green-black field tones lit
+   by hot chalk whites; gold reserved for money + lendária foil;
+   flag blue rationed to the rara seal; red means Z4/death only.
+   Spec: docs/spec-v2.md §9 · Words: design/identity.md
+   Fonts (loaded in index.html):
+     Kanit 600–900 (+ italic 700–900)  → display / score bugs
+     Barlow Semi Condensed 500–800     → body / labels / UI
+   ============================================================ */
+
+:root {
+  /* ----------------------------------------------------------
+     COLOR · CAMPO (field greens — the dark scale of the game)
+     Night pitch under lights: green-black, never neutral gray.
+     ---------------------------------------------------------- */
+  --bld-field-950: #04100b; /* page night — the stadium beyond the lights */
+  --bld-field-900: #071711; /* base surface — panels sit here */
+  --bld-field-850: #0a1d14; /* card matte face */
+  --bld-field-800: #0d2418; /* raised surface (shop frame, scorebug body) */
+  --bld-field-700: #133220; /* hover / inset wells */
+  --bld-field-600: #1c452b; /* strong green border / divider */
+  --bld-field-500: #287040; /* live grass — progress, success fills */
+  --bld-field-400: #3f9c58; /* lit grass — active pips, win accents */
+  --bld-field-300: #74c184; /* success text on dark (AA on field-900) */
+
+  /* ----------------------------------------------------------
+     COLOR · FLOODLIGHT (chalk whites — text & line markings)
+     Warm like halide lamps, never pure #fff except specular hits.
+     ---------------------------------------------------------- */
+  --bld-flood-0:   #fffef4; /* hot specular — foil glints, score digits */
+  --bld-flood-100: #f4efdc; /* chalk — primary text */
+  --bld-flood-300: #cfcdb6; /* secondary text */
+  --bld-flood-500: #9aa28e; /* muted text / placeholders (AA large on 900) */
+  --bld-flood-700: #5d6757; /* disabled / faint rules */
+
+  /* ----------------------------------------------------------
+     COLOR · OURO (gold — cruzeiros & lendária ONLY)
+     Trophy brass, not banana yellow. If everything is gold,
+     nothing is.
+     ---------------------------------------------------------- */
+  --bld-gold-200: #ffe49c; /* foil hot edge */
+  --bld-gold-300: #ffd166; /* coin face, foil mid */
+  --bld-gold-400: #eab748; /* core gold — coin chips, lendária frame */
+  --bld-gold-600: #a87f22; /* engraved gold, foil shadow */
+  --bld-gold-800: #4a350c; /* gold-on-gold shadow text */
+  --bld-gold-ink: #231803; /* text ON gold surfaces */
+
+  /* ----------------------------------------------------------
+     COLOR · PERIGO (red — Z4, death, danger actions ONLY)
+     ---------------------------------------------------------- */
+  --bld-red-300: #ff8a7d; /* danger text on dark (AA) */
+  --bld-red-500: #e23b30; /* Z4 marker, glows, non-text accents */
+  --bld-red-600: #cc2d22; /* danger FILL behind white text (5.2:1 AA) */
+  --bld-red-700: #8e1d18; /* danger deep / borders */
+  --bld-red-950: #1f0907; /* death screen wash */
+
+  /* ----------------------------------------------------------
+     COLOR · SELO (flag blue — rara rarity seal ONLY)
+     The blue of the globe on the flag; rationed harder than gold.
+     ---------------------------------------------------------- */
+  --bld-blue-300: #8fb8ff; /* rara accents / text on dark (AA) */
+  --bld-blue-500: #2f6fd6; /* rara seal fill */
+  --bld-blue-700: #1c437f; /* rara frame deep */
+
+  /* ----------------------------------------------------------
+     SEMANTIC ALIASES
+     ---------------------------------------------------------- */
+  --bld-bg:           var(--bld-field-950);
+  --bld-surface:      var(--bld-field-900);
+  --bld-surface-up:   var(--bld-field-800);
+  --bld-ink:          var(--bld-flood-100);
+  --bld-ink-soft:     var(--bld-flood-300);
+  --bld-ink-muted:    var(--bld-flood-500);
+  --bld-line:         var(--bld-field-600);
+  --bld-coin:         var(--bld-gold-400);
+  --bld-danger:       var(--bld-red-500);
+  --bld-win:          var(--bld-field-400);
+
+  /* ----------------------------------------------------------
+     TYPOGRAPHY
+     Display = Kanit, heavy, uppercase, tightened — botequim
+     poster / 90s TV grafismo energy. Skew is applied at the
+     component level (–6deg italic slabs), not here.
+     Body = Barlow Semi Condensed — tall, utilitarian, reads
+     fast at small sizes like a stadium ticker.
+     ---------------------------------------------------------- */
+  --bld-font-display: "Kanit", "Arial Black", Impact, sans-serif;
+  --bld-font-body: "Barlow Semi Condensed", "Trebuchet MS", Arial, sans-serif;
+
+  /* type scale (fluid where it matters) */
+  --bld-text-display-xl: clamp(2.75rem, 9vw, 4.75rem);  /* wordmark, GLÓRIA/FIM */
+  --bld-text-display:    clamp(1.9rem, 6vw, 2.9rem);    /* screen titles */
+  --bld-text-heading:    clamp(1.25rem, 4vw, 1.6rem);   /* panel headers */
+  --bld-text-score:      clamp(1.8rem, 7vw, 2.6rem);    /* score bug digits */
+  --bld-text-body:       1rem;
+  --bld-text-small:      0.875rem;
+  --bld-text-label:      0.75rem;                        /* uppercase microcopy */
+
+  /* weights actually loaded — do not invent others */
+  --bld-weight-body: 500;
+  --bld-weight-semibold: 600;
+  --bld-weight-bold: 700;
+  --bld-weight-heavy: 800;
+  --bld-weight-black: 900; /* Kanit only */
+
+  --bld-tracking-label: 0.09em;  /* uppercase Barlow labels */
+  --bld-tracking-display: -0.01em;
+  --bld-leading-tight: 1.05;
+  --bld-leading-body: 1.45;
+
+  /* ----------------------------------------------------------
+     SPACING — 4px base scale
+     ---------------------------------------------------------- */
+  --bld-space-1: 4px;
+  --bld-space-2: 8px;
+  --bld-space-3: 12px;
+  --bld-space-4: 16px;
+  --bld-space-5: 20px;
+  --bld-space-6: 24px;
+  --bld-space-8: 32px;
+  --bld-space-10: 40px;
+  --bld-space-12: 48px;
+
+  /* ----------------------------------------------------------
+     RADII — figurinhas have softly rounded sticker corners;
+     broadcast chrome stays chunky and near-square.
+     ---------------------------------------------------------- */
+  --bld-radius-hard: 3px;   /* score bug, ticker, poster buttons */
+  --bld-radius-ui: 8px;     /* panels, inputs */
+  --bld-radius-card: 12px;  /* figurinha outer corner */
+  --bld-radius-pill: 999px; /* coin chips, pips */
+
+  /* ----------------------------------------------------------
+     SHADOWS & GLOWS
+     Light comes from ABOVE (the floodlights): glows are cool
+     chalk, drops fall straight down and hard.
+     ---------------------------------------------------------- */
+  --bld-shadow-lift:
+    0 12px 28px rgba(0, 0, 0, 0.55),
+    0 3px 8px rgba(0, 0, 0, 0.45);          /* card raised off the album page */
+  --bld-shadow-press:
+    0 2px 4px rgba(0, 0, 0, 0.5);            /* active/pressed */
+  --bld-shadow-poster:
+    4px 4px 0 rgba(0, 0, 0, 0.85);           /* botequim hard offset — buttons */
+  --bld-glow-flood:
+    0 0 28px rgba(244, 239, 220, 0.14);      /* floodlight halo on chrome */
+  --bld-glow-gold:
+    0 0 18px rgba(234, 183, 72, 0.38),
+    0 0 46px rgba(234, 183, 72, 0.16);       /* lendária / coin payout */
+  --bld-glow-danger:
+    0 0 22px rgba(226, 59, 48, 0.35);        /* Z4 pulse, death frame */
+
+  /* ----------------------------------------------------------
+     MOTION — fast and physical. NOTHING exceeds 200ms.
+     prefers-reduced-motion: every animation must collapse to
+     its end state; the global kill-switch below enforces it,
+     components must still read correctly with zero motion.
+     ---------------------------------------------------------- */
+  --bld-dur-instant: 90ms;   /* press feedback, pip ticks */
+  --bld-dur-quick: 140ms;    /* hovers, toggles, coin count */
+  --bld-dur-move: 200ms;     /* card deal, toast entry — the ceiling */
+  --bld-ease-out: cubic-bezier(0.2, 0.8, 0.3, 1);      /* default exit-fast */
+  --bld-ease-snap: cubic-bezier(0.3, 1.4, 0.4, 1);     /* overshoot — dice, toasts */
+  --bld-ease-in-out: cubic-bezier(0.45, 0, 0.25, 1);   /* state crossfades */
+}
+
+/* Global reduced-motion kill-switch: end-states only. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bld-dur-instant: 1ms;
+    --bld-dur-quick: 1ms;
+    --bld-dur-move: 1ms;
+  }
+  .bld-anim,
+  .bld-anim::before,
+  .bld-anim::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

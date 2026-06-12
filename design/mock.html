@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bolado v2 — Visual Contract (static mock)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700;800&family=Kanit:ital,wght@0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="../src/styles/tokens.css" />
+  <link rel="stylesheet" href="../src/styles/components.css" />
+  <style>
+    /* Mock-only scaffolding (page layout, not part of the system). */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      padding: 20px 14px 56px;
+    }
+    .mock-scene {
+      max-width: 980px;
+      margin: 0 auto 48px;
+    }
+    .mock-scene-tag {
+      margin-bottom: 14px;
+      opacity: 0.7;
+    }
+    .mock-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .mock-wordmark {
+      font-family: var(--bld-font-display);
+      font-weight: 900;
+      font-style: italic;
+      font-size: 1.5rem;
+      line-height: 1;
+      text-transform: uppercase;
+      color: var(--bld-flood-100);
+      letter-spacing: -0.01em;
+      text-shadow: 0 0 18px rgba(244, 239, 220, 0.25);
+    }
+    .mock-wordmark em {
+      color: var(--bld-gold-400);
+      font-style: inherit;
+    }
+    .mock-dice-row {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 6px 4px 14px;
+      flex-wrap: wrap;
+    }
+    .mock-dice-copy { max-width: 30ch; }
+    .mock-dice-copy .bld-label { display: block; margin-bottom: 4px; color: var(--bld-flood-300); }
+    .mock-dice-copy p {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--bld-ink-muted);
+      line-height: 1.35;
+    }
+    .mock-cards {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 10px 4px 18px;
+    }
+    .mock-stage-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .mock-broadcast {
+      position: relative;
+      border-radius: var(--bld-radius-ui);
+      border: 1px solid var(--bld-line);
+      overflow: hidden;
+      padding: 18px 18px 16px;
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 18px;
+      background:
+        radial-gradient(110% 80% at 50% -10%, rgba(244, 239, 220, 0.12), transparent 55%),
+        linear-gradient(180deg, rgba(19, 50, 32, 0.65), rgba(4, 16, 11, 0.9)),
+        repeating-linear-gradient(90deg, rgba(244, 239, 220, 0.028) 0 90px, transparent 90px 180px),
+        var(--bld-field-900);
+    }
+    .mock-broadcast::after {
+      /* pitch line hint */
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      width: 260px;
+      height: 260px;
+      transform: translateX(-50%);
+      border: 2px solid rgba(244, 239, 220, 0.07);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .mock-broadcast-mid {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .mock-broadcast-bottom {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .mock-stakes {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .mock-stakes .bld-label { color: var(--bld-flood-300); }
+    .mock-verdict-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .mock-btn-row {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body class="bld-stage-bg bld-grain">
+
+  <!-- ============ SCENE 1 · O MERCADO ============ -->
+  <section class="mock-scene" aria-label="Mercado">
+    <div class="mock-topbar">
+      <div class="mock-wordmark">Bola<em>do</em></div>
+      <div class="bld-stages" aria-label="Progresso da run">
+        <span class="bld-pip bld-pip--done"></span>
+        <span class="bld-pip bld-pip--done"></span>
+        <span class="bld-pip bld-pip--current"></span>
+        <span class="bld-pip"></span>
+        <span class="bld-pip bld-pip--boss"></span>
+        <span class="bld-pip bld-pip--boss"></span>
+        <span class="bld-pip bld-pip--boss"></span>
+      </div>
+      <span class="bld-coin bld-coin--wallet">12</span>
+    </div>
+
+    <div class="bld-shop">
+      <header class="bld-shop__header">
+        <h2 class="bld-strap bld-strap--gold" style="margin:0"><span>O Mercado</span></h2>
+        <span class="bld-label">Grupo C · Jogo 3 — próximo: Peñarol (fora)</span>
+      </header>
+
+      <div class="bld-shop__section mock-dice-row">
+        <button class="bld-dice" aria-label="Rolar o dado: clube aleatório"></button>
+        <div class="mock-dice-copy">
+          <span class="bld-label">Rolar o dado</span>
+          <p>Um clube histórico aparece. Contrate UM jogador dele. Rerolar custa <strong style="color:var(--bld-gold-300)">2</strong>.</p>
+        </div>
+        <button class="bld-btn bld-btn--secondary"><span>Rerolar · 2</span></button>
+      </div>
+
+      <div class="bld-shop__section">
+        <span class="bld-label" style="display:block;margin-bottom:6px">Cartas de Boleiro · máx 5 ativas</span>
+        <div class="mock-cards">
+          <article class="bld-figurinha">
+            <div class="bld-figurinha__face">
+              <div class="bld-figurinha__portrait">
+                <span class="bld-figurinha__emoji">🧱</span>
+                <span class="bld-figurinha__rarity">Comum</span>
+              </div>
+              <h3 class="bld-figurinha__name">Muralha</h3>
+              <p class="bld-figurinha__effect">Jogo sem sofrer gol paga +5 moedas.</p>
+              <footer class="bld-figurinha__bottom">
+                <span class="bld-figurinha__tag">Várzea</span>
+                <span class="bld-coin bld-coin--cost">3</span>
+              </footer>
+            </div>
+          </article>
+
+          <article class="bld-figurinha bld-figurinha--rara">
+            <div class="bld-figurinha__face">
+              <div class="bld-figurinha__portrait">
+                <span class="bld-figurinha__emoji">😤</span>
+                <span class="bld-figurinha__rarity">Rara</span>
+              </div>
+              <h3 class="bld-figurinha__name">Catimba</h3>
+              <p class="bld-figurinha__effect">Empates viram vitórias nos pênaltis.</p>
+              <footer class="bld-figurinha__bottom">
+                <span class="bld-figurinha__tag">Tática</span>
+                <span class="bld-coin bld-coin--cost">5</span>
+              </footer>
+            </div>
+          </article>
+
+          <article class="bld-figurinha bld-figurinha--lendaria">
+            <div class="bld-figurinha__face">
+              <div class="bld-figurinha__portrait">
+                <span class="bld-figurinha__emoji">🎩</span>
+                <span class="bld-figurinha__rarity">Lendária</span>
+              </div>
+              <h3 class="bld-figurinha__name">Maestro</h3>
+              <p class="bld-figurinha__effect">Camisa 10 ganha +2 por companheiro da mesma era.</p>
+              <footer class="bld-figurinha__bottom">
+                <span class="bld-figurinha__tag">Lendária</span>
+                <span class="bld-coin bld-coin--cost">8</span>
+              </footer>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <div class="bld-shop__section">
+        <span class="bld-label" style="display:block;margin-bottom:6px">Escalação · 4-3-3</span>
+        <div class="bld-squad">
+          <div class="bld-shirt"><span class="bld-shirt__num">1</span><span class="bld-shirt__name">Bira</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">2</span><span class="bld-shirt__name">Tonho</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">3</span><span class="bld-shirt__name">Galvão</span></div>
+          <div class="bld-shirt bld-shirt--new"><span class="bld-shirt__num">4</span><span class="bld-shirt__name">Figueroa</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">6</span><span class="bld-shirt__name">Índio</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">5</span><span class="bld-shirt__name">Russo</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">8</span><span class="bld-shirt__name">Maneca</span></div>
+          <div class="bld-shirt bld-shirt--new"><span class="bld-shirt__num">10</span><span class="bld-shirt__name">Zico</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">7</span><span class="bld-shirt__name">Cabralzinho</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">9</span><span class="bld-shirt__name">Baltazar</span></div>
+          <div class="bld-shirt"><span class="bld-shirt__num">11</span><span class="bld-shirt__name">Peralta</span></div>
+        </div>
+      </div>
+
+      <div class="mock-btn-row" style="margin-top:18px">
+        <button class="bld-btn bld-btn--primary bld-btn--big"><span>Bora · Jogar</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 2 · TRANSMISSÃO ============ -->
+  <section class="mock-scene" aria-label="Transmissão da partida">
+    <div class="mock-stage-row">
+      <h2 class="bld-strap" style="margin:0"><span>Transmissão</span></h2>
+      <div class="mock-stakes">
+        <span class="bld-label">Vitória paga</span>
+        <span class="bld-coin">4</span>
+        <span class="bld-label" style="color:var(--bld-red-300)">Derrota: fim da run</span>
+      </div>
+    </div>
+
+    <div class="mock-broadcast bld-grain">
+      <div class="bld-scorebug">
+        <span class="bld-scorebug__comp">Libertadores · Grupo C</span>
+        <div class="bld-scorebug__row">
+          <span class="bld-scorebug__team">BOL</span>
+          <span class="bld-scorebug__score">3–1</span>
+          <span class="bld-scorebug__team">PEÑ</span>
+          <span class="bld-scorebug__clock">72'</span>
+        </div>
+      </div>
+
+      <div class="mock-broadcast-mid">
+        <div class="bld-toast bld-anim" role="status">
+          <span class="bld-toast__emoji">😤</span>
+          <span>Catimba ativou!</span>
+          <span class="bld-toast__detail">empate vira vitória nos pênaltis</span>
+        </div>
+      </div>
+
+      <div class="mock-broadcast-bottom">
+        <div class="bld-ticker">
+          <span class="bld-ticker__tag">Ao vivo</span>
+          <span class="bld-ticker__text">GOOOL! Zico cobra a falta no ângulo — a lei do ex não perdoa o Peñarol.</span>
+        </div>
+        <div class="mock-btn-row" style="justify-content:flex-end">
+          <button class="bld-btn bld-btn--secondary"><span>Acelerar ▸▸</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- verdict framings -->
+    <div class="mock-verdict-grid">
+      <div class="bld-screen bld-screen--death">
+        <h2 class="bld-strap bld-strap--danger" style="margin:0"><span>Fim da run</span></h2>
+        <p class="bld-screen__title" style="margin:0">Rebaixado</p>
+        <span class="bld-screen__scoreline">412 pts</span>
+        <p class="bld-screen__verdict">O que faltou: defesa parou na era errada — zaga média 61 contra ataque 78.</p>
+        <button class="bld-btn bld-btn--primary bld-btn--big"><span>Bora de novo</span></button>
+      </div>
+      <div class="bld-screen bld-screen--glory">
+        <h2 class="bld-strap bld-strap--gold" style="margin:0"><span>Campeão</span></h2>
+        <p class="bld-screen__title" style="margin:0">Glória eterna</p>
+        <span class="bld-screen__scoreline">847 pts</span>
+        <p class="bld-screen__verdict">Build: Maestro + Catimba + Caldeirão · Top 4% do mundo hoje.</p>
+        <button class="bld-btn bld-btn--secondary"><span>Compartilhar</span></button>
+      </div>
+    </div>
+  </section>
+
+</body>
+</html>
