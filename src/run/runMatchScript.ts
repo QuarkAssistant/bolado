@@ -111,7 +111,13 @@ export function buildRunMatchScript(
   const seed = `bolado-run-script-${ctx.seed}`;
   const gkName = findGkName(ctx.squad);
   const chancePool = buildChancePool(ctx.squad);
-  const common = { opponent: opponent.name, stageLabel: ctx.stage.label, flavor: opponent.flavor };
+  const common = {
+    opponent: opponent.name,
+    stageLabel: ctx.stage.label,
+    // Flavor lines are full sentences; trim trailing punctuation so the
+    // kickoff templates' own ".", "!" don't double up.
+    flavor: opponent.flavor.replace(/[.!…\s]+$/u, ""),
+  };
 
   const beats: RunMatchBeat[] = [];
   let phraseIndex = 0;
