@@ -1,0 +1,515 @@
+/* ============================================================
+   BOLADO v2 — RUN APP LAYOUT (.run-*)
+   Screen scaffolding for RunApp/Mercado. Visual vocabulary lives
+   in tokens.css + components.css (.bld-*); this file only lays
+   the furniture out. Mobile-first (375px), single column capped
+   at 760px on desktop.
+   ============================================================ */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+.run-viewport {
+  min-height: 100dvh;
+  padding: 16px 14px calc(28px + env(safe-area-inset-bottom));
+}
+
+.run-frame {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ---- top bar -------------------------------------------------- */
+
+.run-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.run-wordmark {
+  font-family: var(--bld-font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.4rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--bld-flood-100);
+  letter-spacing: -0.01em;
+  text-shadow: 0 0 18px rgba(244, 239, 220, 0.25);
+}
+.run-wordmark em {
+  color: var(--bld-gold-400);
+  font-style: inherit;
+}
+
+.run-topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.run-scorechip {
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--bld-flood-100);
+  white-space: nowrap;
+}
+.run-scorechip small {
+  font-family: var(--bld-font-body);
+  font-style: normal;
+  font-size: 0.62rem;
+  font-weight: var(--bld-weight-bold);
+  letter-spacing: var(--bld-tracking-label);
+  text-transform: uppercase;
+  color: var(--bld-ink-muted);
+  margin-left: 4px;
+}
+
+/* 10 stages of pips need tighter connectors than the mock's 7 */
+.run-pips {
+  display: flex;
+  justify-content: center;
+  margin: 2px 0 16px;
+}
+.run-pips .bld-pip + .bld-pip {
+  margin-left: 13px;
+}
+.run-pips .bld-pip + .bld-pip::before {
+  width: 13px;
+}
+
+/* ---- generic bits --------------------------------------------- */
+
+.run-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.run-muted {
+  font-size: 0.85rem;
+  font-weight: var(--bld-weight-body);
+  color: var(--bld-ink-muted);
+  line-height: 1.35;
+}
+
+.run-linkbtn {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--bld-font-body);
+  font-size: var(--bld-text-label);
+  font-weight: var(--bld-weight-bold);
+  letter-spacing: var(--bld-tracking-label);
+  text-transform: uppercase;
+  color: var(--bld-ink-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.run-linkbtn:hover {
+  color: var(--bld-red-300);
+}
+
+.run-cta-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  margin-top: 18px;
+}
+
+/* reset that lets .bld-figurinha act as a button */
+.run-figbtn {
+  appearance: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: inherit;
+  flex: none;
+}
+.run-figbtn:focus-visible {
+  outline: 3px solid var(--bld-gold-300);
+  outline-offset: 3px;
+}
+.run-figbtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.run-figbtn:disabled:hover {
+  transform: none;
+}
+/* figurinha anatomy is spans inside a <button>; restore block flow */
+.run-figbtn .bld-figurinha__name,
+.run-figbtn .bld-figurinha__effect {
+  display: block;
+}
+.run-figbtn .bld-figurinha__bottom {
+  display: flex;
+}
+.run-figbtn--selected {
+  outline: 3px solid var(--bld-gold-300);
+  outline-offset: 3px;
+}
+
+/* ---- HOME ------------------------------------------------------ */
+
+.run-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 18px;
+  min-height: calc(100dvh - 80px);
+}
+.run-home__wordmark {
+  margin: 0;
+  font-family: var(--bld-font-display);
+  font-weight: 900;
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: var(--bld-text-display-xl);
+  line-height: 1;
+  letter-spacing: var(--bld-tracking-display);
+  color: var(--bld-flood-100);
+  text-shadow: 0 0 32px rgba(244, 239, 220, 0.3);
+}
+.run-home__wordmark em {
+  color: var(--bld-gold-400);
+  font-style: inherit;
+}
+.run-home__tagline {
+  margin: 0;
+  max-width: 34ch;
+}
+
+/* ---- MERCADO --------------------------------------------------- */
+
+.run-dice-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 6px 2px 10px;
+}
+.run-dice-copy {
+  flex: 1;
+  min-width: 150px;
+}
+.run-dice-copy .bld-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--bld-flood-300);
+}
+.run-dice-copy p {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: var(--bld-weight-body);
+  color: var(--bld-ink-muted);
+  line-height: 1.35;
+}
+
+.run-offer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 4px 0 4px;
+}
+.run-offer-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.run-card-row {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 12px 4px 16px;
+  scrollbar-width: thin;
+}
+
+.run-pos-badge {
+  font-family: var(--bld-font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.9rem;
+  line-height: 1;
+  color: var(--bld-flood-0);
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.65);
+}
+
+/* sign confirmation panel */
+.run-panel {
+  background: var(--bld-field-800);
+  border: 1px solid var(--bld-line);
+  border-radius: var(--bld-radius-ui);
+  padding: 12px 14px;
+  margin: 4px 0 12px;
+}
+.run-panel__title {
+  margin: 0 0 6px;
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+  color: var(--bld-flood-100);
+}
+.run-panel__text {
+  margin: 0 0 10px;
+  font-size: 0.88rem;
+  font-weight: var(--bld-weight-body);
+  color: var(--bld-ink-soft);
+  line-height: 1.4;
+}
+.run-panel__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* squad strip states while picking the replacement slot */
+.run-shirtbtn {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  flex: none;
+}
+.run-shirtbtn:focus-visible {
+  outline: 3px solid var(--bld-gold-300);
+  outline-offset: 2px;
+}
+.run-shirtbtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+.run-shirtbtn--ok .bld-shirt {
+  border-color: var(--bld-field-400);
+  box-shadow: 0 0 10px rgba(63, 156, 88, 0.45);
+}
+.run-shirtbtn--picked .bld-shirt {
+  border-color: var(--bld-gold-300);
+  box-shadow: 0 0 12px rgba(234, 183, 72, 0.5);
+}
+.run-shirt-pos {
+  font-size: 0.56rem;
+  font-weight: var(--bld-weight-bold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bld-flood-700);
+}
+
+.run-toast-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.run-toast-stack .bld-toast {
+  font-size: 0.85rem;
+  padding: 8px 14px 9px 10px;
+}
+
+/* offer reveal: cards deal in (collapses under reduced motion) */
+.run-deal.bld-anim {
+  animation: run-deal-in var(--bld-dur-move) var(--bld-ease-snap) both;
+}
+@keyframes run-deal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) rotate(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+
+/* ---- PRE-MATCH -------------------------------------------------- */
+
+.run-prematch {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  text-align: center;
+  padding: 24px 0;
+}
+.run-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+  padding: 22px 14px;
+  border: 1px solid var(--bld-line);
+  border-radius: var(--bld-radius-ui);
+  background:
+    radial-gradient(110% 90% at 50% -10%, rgba(244, 239, 220, 0.1), transparent 55%),
+    var(--bld-surface);
+}
+.run-vs__side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+.run-vs__name {
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: 1.15rem;
+  line-height: var(--bld-leading-tight);
+  color: var(--bld-flood-100);
+}
+.run-vs__rating {
+  font-family: var(--bld-font-display);
+  font-weight: 900;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--bld-flood-0);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(244, 239, 220, 0.35);
+}
+.run-vs__x {
+  font-family: var(--bld-font-display);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--bld-ink-muted);
+}
+.run-badge {
+  display: inline-block;
+  font-family: var(--bld-font-body);
+  font-size: var(--bld-text-label);
+  font-weight: var(--bld-weight-heavy);
+  letter-spacing: var(--bld-tracking-label);
+  text-transform: uppercase;
+  padding: 4px 10px 5px;
+  border-radius: var(--bld-radius-hard);
+  background: var(--bld-field-700);
+  color: var(--bld-flood-100);
+  border: 1px solid var(--bld-field-600);
+}
+.run-badge--danger {
+  background: var(--bld-red-600);
+  border-color: var(--bld-red-700);
+  color: var(--bld-flood-0);
+}
+.run-flavor {
+  margin: 0;
+  max-width: 40ch;
+  font-size: 0.95rem;
+  font-weight: var(--bld-weight-body);
+  font-style: italic;
+  color: var(--bld-ink-soft);
+  line-height: 1.45;
+}
+.run-stakes {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.run-stakes .bld-label {
+  color: var(--bld-flood-300);
+}
+
+/* ---- FULL TIME (match stub) ------------------------------------- */
+
+.run-fulltime {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.run-fulltime__bughold {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 2px;
+}
+.run-goals {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.run-receipt {
+  background: var(--bld-field-850);
+  border: 1px solid var(--bld-line);
+  border-radius: var(--bld-radius-ui);
+  padding: 12px 14px;
+}
+.run-receipt__title {
+  display: block;
+  margin-bottom: 8px;
+}
+.run-receipt__line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.88rem;
+  font-weight: var(--bld-weight-body);
+  color: var(--bld-ink-soft);
+  padding: 2px 0;
+}
+.run-receipt__line strong {
+  font-weight: var(--bld-weight-bold);
+  color: var(--bld-flood-100);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.run-receipt__total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(244, 239, 220, 0.18);
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  text-transform: uppercase;
+  color: var(--bld-flood-100);
+}
+.run-receipt-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 700px) {
+  .run-receipt-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
