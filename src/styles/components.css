@@ -1,0 +1,860 @@
+/* ============================================================
+   BOLADO v2 — CORE COMPONENTS  (.bld-*)
+   Requires: tokens.css loaded first.
+   Identity: "NOITE DE JOGO" — see design/identity.md.
+   Conventions:
+     .bld-<component>            block
+     .bld-<component>__<part>    element
+     .bld-<component>--<variant> modifier
+     .bld-anim                   opt-in animation hook (killed by
+                                 prefers-reduced-motion in tokens.css)
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   0 · FOUNDATIONS
+   ------------------------------------------------------------ */
+
+.bld-stage-bg {
+  /* The stadium night: floodlight falloff from above + grain.
+     Apply to the page/screen root. */
+  background:
+    radial-gradient(120% 70% at 50% -12%, rgba(244, 239, 220, 0.085), transparent 60%),
+    radial-gradient(80% 50% at 50% 110%, rgba(40, 112, 64, 0.12), transparent 70%),
+    var(--bld-bg);
+  color: var(--bld-ink);
+  font-family: var(--bld-font-body);
+  font-weight: var(--bld-weight-semibold);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+.bld-grain {
+  /* Film grain pass — keeps flat darks from looking like a default
+     dark theme. Pure CSS noise, no asset. */
+  position: relative;
+}
+.bld-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bld-label {
+  /* Uppercase microcopy — the connective tissue of every screen. */
+  font-family: var(--bld-font-body);
+  font-size: var(--bld-text-label);
+  font-weight: var(--bld-weight-bold);
+  letter-spacing: var(--bld-tracking-label);
+  text-transform: uppercase;
+  color: var(--bld-ink-muted);
+}
+
+.bld-strap {
+  /* The skewed Kanit slab — botequim poster headline. Use for
+     section titles: O MERCADO, FIM DE JOGO, ESCALAÇÃO. */
+  display: inline-block;
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-black);
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: var(--bld-tracking-display);
+  line-height: var(--bld-leading-tight);
+  font-size: var(--bld-text-heading);
+  color: var(--bld-field-950);
+  background: var(--bld-flood-100);
+  padding: 2px 14px 4px 12px;
+  transform: skewX(-8deg);
+  box-shadow: var(--bld-shadow-poster);
+}
+.bld-strap > span { display: inline-block; transform: skewX(8deg); }
+.bld-strap--gold { background: var(--bld-gold-400); color: var(--bld-gold-ink); }
+.bld-strap--danger { background: var(--bld-red-600); color: var(--bld-flood-0); }
+
+/* ------------------------------------------------------------
+   1 · BUTTONS
+   Primary = "BORA" energy: chalk slab, skewed, hard poster
+   shadow. It should feel like slapping a table.
+   ------------------------------------------------------------ */
+
+.bld-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bld-space-2);
+  border: 0;
+  cursor: pointer;
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 14px 26px 16px;
+  border-radius: var(--bld-radius-hard);
+  transform: skewX(-6deg);
+  transition:
+    transform var(--bld-dur-instant) var(--bld-ease-out),
+    box-shadow var(--bld-dur-instant) var(--bld-ease-out),
+    background-color var(--bld-dur-quick) var(--bld-ease-out);
+}
+.bld-btn > span { display: inline-block; transform: skewX(6deg); }
+.bld-btn:focus-visible {
+  outline: 3px solid var(--bld-gold-300);
+  outline-offset: 3px;
+}
+
+.bld-btn--primary {
+  background: var(--bld-flood-100);
+  color: var(--bld-field-950);
+  box-shadow: var(--bld-shadow-poster), var(--bld-glow-flood);
+}
+.bld-btn--primary:hover { background: var(--bld-flood-0); }
+.bld-btn--primary:active {
+  transform: skewX(-6deg) translate(3px, 3px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+}
+
+.bld-btn--secondary {
+  background: transparent;
+  color: var(--bld-flood-100);
+  box-shadow: inset 0 0 0 2px var(--bld-flood-100);
+}
+.bld-btn--secondary:hover {
+  background: rgba(244, 239, 220, 0.08);
+  box-shadow: inset 0 0 0 2px var(--bld-flood-0), var(--bld-glow-flood);
+}
+.bld-btn--secondary:active { transform: skewX(-6deg) translateY(2px); }
+
+.bld-btn--danger {
+  background: var(--bld-red-600);
+  color: var(--bld-flood-0);
+  box-shadow: var(--bld-shadow-poster);
+}
+.bld-btn--danger:hover { background: var(--bld-red-500); }
+.bld-btn--danger:active {
+  transform: skewX(-6deg) translate(3px, 3px);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.85);
+}
+
+.bld-btn--big {
+  /* BORA DE NOVO on the death screen */
+  font-size: 1.5rem;
+  padding: 18px 38px 20px;
+}
+
+.bld-btn:disabled {
+  background: var(--bld-field-700);
+  color: var(--bld-flood-700);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------
+   2 · COIN CHIP — cruzeiros
+   A pressed-brass token: ring + engraved face. Gold is money.
+   ------------------------------------------------------------ */
+
+.bld-coin {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--bld-gold-300);
+  white-space: nowrap;
+}
+.bld-coin::before {
+  content: "";
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: var(--bld-radius-pill);
+  flex: none;
+  background:
+    radial-gradient(circle at 32% 28%, var(--bld-gold-200) 0%, var(--bld-gold-300) 34%, var(--bld-gold-400) 55%, var(--bld-gold-600) 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(74, 53, 12, 0.55),
+    inset 0 -2px 3px rgba(74, 53, 12, 0.5),
+    inset 0 2px 2px rgba(255, 228, 156, 0.8),
+    0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.bld-coin--wallet {
+  /* The header wallet: token + count inside a dark well */
+  background: var(--bld-field-900);
+  border: 1px solid var(--bld-field-600);
+  border-radius: var(--bld-radius-pill);
+  padding: 6px 14px 7px 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+.bld-coin--payout {
+  /* Coin gain moment — gets the gold glow */
+  text-shadow: 0 0 14px rgba(234, 183, 72, 0.55);
+}
+.bld-coin--cost { font-size: 0.95rem; }
+
+/* ------------------------------------------------------------
+   3 · FIGURINHA — Cartas de Boleiro as album stickers
+   Anatomy: the BORDER is the rarity (chalk sticker / blue selo /
+   gold foil); the FACE is matte dark paper with a PORTRAIT zone
+   up top — sunburst rays behind the pictogram, like the radial
+   backdrops of vintage álbum stickers — then a centered name
+   band, effect text, and a ticket-stub footer.
+   ------------------------------------------------------------ */
+
+.bld-figurinha {
+  position: relative;
+  width: 168px;
+  border-radius: var(--bld-radius-card);
+  padding: 5px; /* the rarity border thickness */
+  background: var(--bld-flood-300); /* comum: chalk sticker edge */
+  box-shadow: var(--bld-shadow-lift);
+  transition:
+    transform var(--bld-dur-quick) var(--bld-ease-out),
+    box-shadow var(--bld-dur-quick) var(--bld-ease-out);
+}
+.bld-figurinha:hover {
+  transform: translateY(-4px) rotate(-1deg);
+}
+
+.bld-figurinha__face {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: calc(var(--bld-radius-card) - 4px);
+  background: var(--bld-field-850);
+  min-height: 208px;
+  overflow: hidden;
+}
+.bld-figurinha__face::after {
+  /* matte paper tooth */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.bld-figurinha__portrait {
+  /* the sticker "photo": pictogram over chalk sunburst rays */
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 84px;
+  background:
+    radial-gradient(circle at 50% 62%, rgba(244, 239, 220, 0.14), transparent 64%),
+    repeating-conic-gradient(from 8deg at 50% 62%,
+      rgba(244, 239, 220, 0.075) 0deg 7deg,
+      transparent 7deg 16deg),
+    linear-gradient(180deg, var(--bld-field-700), var(--bld-field-850) 92%);
+  border-bottom: 1px solid rgba(244, 239, 220, 0.12);
+}
+.bld-figurinha__emoji {
+  font-size: 2.6rem;
+  line-height: 1;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.65));
+}
+.bld-figurinha__rarity {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  font-family: var(--bld-font-body);
+  font-size: 0.62rem;
+  font-weight: var(--bld-weight-heavy);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 7px 4px;
+  border-radius: var(--bld-radius-hard);
+  background: rgba(4, 16, 11, 0.72);
+  color: var(--bld-ink-soft);
+}
+.bld-figurinha__name {
+  margin: 10px 10px 2px;
+  text-align: center;
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: 1.25rem;
+  line-height: var(--bld-leading-tight);
+  color: var(--bld-flood-0);
+}
+.bld-figurinha__effect {
+  margin: 4px 12px 0;
+  flex: 1;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: var(--bld-weight-body);
+  line-height: 1.35;
+  color: var(--bld-ink-soft);
+}
+.bld-figurinha__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: var(--bld-space-2) var(--bld-space-3) 10px;
+  padding-top: var(--bld-space-2);
+  border-top: 1px dashed rgba(244, 239, 220, 0.18);
+}
+.bld-figurinha__tag {
+  font-size: 0.65rem;
+  font-weight: var(--bld-weight-bold);
+  letter-spacing: var(--bld-tracking-label);
+  text-transform: uppercase;
+  color: var(--bld-ink-muted);
+}
+
+/* — RARA: selo azul. The flag-blue seal, used nowhere else. — */
+.bld-figurinha--rara {
+  background:
+    linear-gradient(115deg, transparent 32%, rgba(255, 254, 244, 0.4) 44%, transparent 54%),
+    linear-gradient(160deg, var(--bld-blue-300) 0%, var(--bld-blue-500) 38%, var(--bld-blue-700) 75%, var(--bld-blue-500) 100%);
+}
+.bld-figurinha--rara .bld-figurinha__rarity {
+  background: var(--bld-blue-700);
+  color: var(--bld-blue-300);
+}
+.bld-figurinha--rara .bld-figurinha__portrait {
+  background:
+    radial-gradient(circle at 50% 62%, rgba(143, 184, 255, 0.18), transparent 64%),
+    repeating-conic-gradient(from 8deg at 50% 62%,
+      rgba(143, 184, 255, 0.09) 0deg 7deg,
+      transparent 7deg 16deg),
+    linear-gradient(180deg, #122b46, var(--bld-field-850) 92%);
+}
+
+/* — LENDÁRIA: gold foil. The border alternates hot specular
+     whites and brass with thin engraved interference lines, and
+     a hard diagonal glint runs across it; the face gets gold
+     sunburst rays + holographic micro-line sheen. Foil must stay
+     BRIGHT — mostly-dark gold reads as cheap plastic, the classic
+     failure. Must read as foil even in a static screenshot. — */
+.bld-figurinha--lendaria {
+  background:
+    /* engraved interference lines over the metal */
+    repeating-linear-gradient(115deg,
+      rgba(74, 53, 12, 0.4) 0 1px,
+      transparent 1px 5px),
+    /* hot metal: specular whites alternating with brass */
+    conic-gradient(from 200deg at 50% 50%,
+      var(--bld-gold-400) 0deg,
+      var(--bld-gold-200) 38deg,
+      var(--bld-flood-0) 62deg,
+      var(--bld-gold-300) 96deg,
+      var(--bld-gold-600) 138deg,
+      var(--bld-gold-200) 178deg,
+      var(--bld-gold-400) 215deg,
+      var(--bld-flood-0) 252deg,
+      var(--bld-gold-300) 290deg,
+      var(--bld-gold-600) 330deg,
+      var(--bld-gold-400) 360deg);
+  box-shadow: var(--bld-shadow-lift), var(--bld-glow-gold);
+}
+.bld-figurinha--lendaria::before {
+  /* foil glint slashing across the whole sticker */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--bld-radius-card);
+  pointer-events: none;
+  background: linear-gradient(115deg,
+    transparent 28%,
+    rgba(255, 254, 244, 0.85) 40%,
+    rgba(255, 254, 244, 0) 49%,
+    rgba(255, 228, 156, 0.5) 60%,
+    transparent 70%);
+  mix-blend-mode: soft-light;
+}
+.bld-figurinha--lendaria .bld-figurinha__face::before {
+  /* holographic micro-line sheen on the matte face */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(115deg,
+      rgba(255, 228, 156, 0.10) 0 1px,
+      transparent 1px 7px),
+    linear-gradient(115deg,
+      transparent 35%,
+      rgba(255, 209, 102, 0.14) 48%,
+      transparent 62%);
+}
+.bld-figurinha--lendaria .bld-figurinha__portrait {
+  background:
+    radial-gradient(circle at 50% 62%, rgba(255, 209, 102, 0.22), transparent 66%),
+    repeating-conic-gradient(from 8deg at 50% 62%,
+      rgba(255, 209, 102, 0.11) 0deg 7deg,
+      transparent 7deg 16deg),
+    linear-gradient(180deg, #2c2410, var(--bld-field-850) 92%);
+  border-bottom-color: rgba(255, 209, 102, 0.22);
+}
+.bld-figurinha--lendaria .bld-figurinha__rarity {
+  background: linear-gradient(160deg, var(--bld-gold-300), var(--bld-gold-400));
+  color: var(--bld-gold-ink);
+}
+.bld-figurinha--lendaria .bld-figurinha__name {
+  color: var(--bld-gold-200);
+  text-shadow: 0 0 12px rgba(234, 183, 72, 0.35);
+}
+
+/* — owned/active state in the hand strip — */
+.bld-figurinha--mini {
+  width: 116px;
+}
+.bld-figurinha--mini .bld-figurinha__face { min-height: 142px; }
+.bld-figurinha--mini .bld-figurinha__portrait { height: 56px; }
+.bld-figurinha--mini .bld-figurinha__emoji { font-size: 1.8rem; }
+.bld-figurinha--mini .bld-figurinha__effect { font-size: 0.72rem; }
+.bld-figurinha--mini .bld-figurinha__name { font-size: 0.95rem; }
+
+/* ------------------------------------------------------------
+   4 · SCORE BUG — vintage broadcast chrome
+   A chunky 90s TV graphic: chamfered slab, scanlines, hot
+   digits. Sits top-left of the match screen like a real bug.
+   ------------------------------------------------------------ */
+
+.bld-scorebug {
+  display: inline-flex;
+  flex-direction: column;
+  font-family: var(--bld-font-display);
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.6));
+}
+.bld-scorebug__comp {
+  align-self: flex-start;
+  font-size: 0.68rem;
+  font-weight: var(--bld-weight-bold);
+  font-family: var(--bld-font-body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bld-gold-ink);
+  background: var(--bld-gold-400);
+  padding: 3px 10px 4px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+}
+.bld-scorebug__row {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(180deg, var(--bld-field-700), var(--bld-field-800) 55%, var(--bld-field-900));
+  border: 1px solid rgba(244, 239, 220, 0.22);
+  border-radius: 0 var(--bld-radius-hard) var(--bld-radius-hard) var(--bld-radius-hard);
+  overflow: hidden;
+}
+.bld-scorebug__row::after {
+  /* CRT scanlines over the whole bug */
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg,
+    rgba(0, 0, 0, 0.22) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+.bld-scorebug__team {
+  display: flex;
+  align-items: center;
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  color: var(--bld-flood-100);
+  padding: 8px 14px 10px;
+}
+.bld-scorebug__score {
+  display: flex;
+  align-items: center;
+  font-weight: var(--bld-weight-black);
+  font-size: var(--bld-text-score);
+  line-height: 1;
+  color: var(--bld-flood-0);
+  background: linear-gradient(180deg, rgba(4, 16, 11, 0.92), rgba(4, 16, 11, 0.75));
+  border-left: 1px solid rgba(244, 239, 220, 0.18);
+  border-right: 1px solid rgba(244, 239, 220, 0.18);
+  padding: 4px 14px 8px;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 0 16px rgba(244, 239, 220, 0.4);
+}
+.bld-scorebug__clock {
+  display: flex;
+  align-items: center;
+  font-family: var(--bld-font-body);
+  font-weight: var(--bld-weight-heavy);
+  font-size: 0.95rem;
+  color: var(--bld-gold-300);
+  padding: 8px 12px 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* — TICKER: the commentary line under the broadcast — */
+.bld-ticker {
+  display: flex;
+  align-items: stretch;
+  font-family: var(--bld-font-body);
+  border-radius: var(--bld-radius-hard);
+  overflow: hidden;
+  border: 1px solid rgba(244, 239, 220, 0.16);
+  background: rgba(4, 16, 11, 0.85);
+}
+.bld-ticker__tag {
+  display: flex;
+  align-items: center;
+  flex: none;
+  font-weight: var(--bld-weight-heavy);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--bld-red-600);
+  color: var(--bld-flood-0);
+  padding: 8px 12px;
+}
+.bld-ticker__text {
+  display: flex;
+  align-items: center;
+  font-weight: var(--bld-weight-semibold);
+  font-size: 0.95rem;
+  color: var(--bld-flood-100);
+  padding: 8px 14px;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   5 · STAGE TRACKER — run progress pips
+   Groups = small pips, mata-mata = boss diamonds. The current
+   stage burns under the floodlight.
+   ------------------------------------------------------------ */
+
+.bld-stages {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+.bld-pip {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: none;
+  border-radius: var(--bld-radius-pill);
+  background: var(--bld-field-700);
+  box-shadow: inset 0 0 0 1.5px var(--bld-field-600);
+}
+.bld-pip + .bld-pip {
+  margin-left: 22px;
+}
+.bld-pip + .bld-pip::before {
+  /* connector chalk line */
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: 22px;
+  height: 2px;
+  transform: translateY(-50%);
+  background: var(--bld-field-600);
+}
+.bld-pip--done {
+  background: var(--bld-field-400);
+  box-shadow: inset 0 0 0 1.5px var(--bld-field-500);
+}
+.bld-pip--done + .bld-pip::before { background: var(--bld-field-500); }
+.bld-pip--current {
+  background: var(--bld-flood-0);
+  box-shadow:
+    inset 0 0 0 1.5px var(--bld-flood-100),
+    0 0 12px rgba(244, 239, 220, 0.65);
+  transform: scale(1.25);
+}
+.bld-pip--boss {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--bld-radius-hard);
+  transform: rotate(45deg) scale(0.92);
+  background: var(--bld-field-700);
+  box-shadow: inset 0 0 0 1.5px var(--bld-gold-600);
+}
+.bld-pip--boss.bld-pip--current {
+  background: var(--bld-gold-400);
+  box-shadow:
+    inset 0 0 0 1.5px var(--bld-gold-200),
+    0 0 14px rgba(234, 183, 72, 0.6);
+  transform: rotate(45deg) scale(1.1);
+}
+
+/* ------------------------------------------------------------
+   6 · DICE BUTTON — the 7a0 roll
+   A physical die you want to slam: tilted, beveled, pips drawn
+   in CSS. Hover squares it up; active throws it down.
+   ------------------------------------------------------------ */
+
+.bld-dice {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border: 0;
+  cursor: pointer;
+  border-radius: 16px;
+  transform: rotate(-7deg);
+  background:
+    linear-gradient(150deg, var(--bld-flood-0) 0%, var(--bld-flood-100) 55%, #d9d3ba 100%);
+  box-shadow:
+    inset 0 -4px 6px rgba(4, 16, 11, 0.28),
+    inset 0 3px 4px rgba(255, 254, 244, 0.9),
+    var(--bld-shadow-poster),
+    var(--bld-glow-flood);
+  transition:
+    transform var(--bld-dur-quick) var(--bld-ease-snap),
+    box-shadow var(--bld-dur-quick) var(--bld-ease-out);
+}
+.bld-dice::after {
+  /* five pips */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle 7px at 24% 24%, var(--bld-field-950) 98%, transparent),
+    radial-gradient(circle 7px at 76% 24%, var(--bld-field-950) 98%, transparent),
+    radial-gradient(circle 7px at 50% 50%, var(--bld-field-950) 98%, transparent),
+    radial-gradient(circle 7px at 24% 76%, var(--bld-field-950) 98%, transparent),
+    radial-gradient(circle 7px at 76% 76%, var(--bld-field-950) 98%, transparent);
+}
+.bld-dice:hover { transform: rotate(-2deg) scale(1.04); }
+.bld-dice:active {
+  transform: rotate(3deg) scale(0.96) translate(2px, 3px);
+  box-shadow:
+    inset 0 -4px 6px rgba(4, 16, 11, 0.28),
+    1px 1px 0 rgba(0, 0, 0, 0.85);
+}
+.bld-dice:focus-visible {
+  outline: 3px solid var(--bld-gold-300);
+  outline-offset: 4px;
+}
+.bld-dice--rolling.bld-anim {
+  animation: bld-dice-shake var(--bld-dur-move) var(--bld-ease-in-out) infinite;
+}
+@keyframes bld-dice-shake {
+  0%, 100% { transform: rotate(-7deg); }
+  25% { transform: rotate(4deg) translateY(-3px); }
+  65% { transform: rotate(-10deg) translateX(2px); }
+}
+
+/* ------------------------------------------------------------
+   7 · SHOP PANEL — O MERCADO frame
+   A market stall under the stands: chalk-ruled frame, ticket-
+   notched header, content wells.
+   ------------------------------------------------------------ */
+
+.bld-shop {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(244, 239, 220, 0.03), transparent 120px),
+    var(--bld-surface);
+  border: 1px solid var(--bld-line);
+  border-radius: var(--bld-radius-ui);
+  box-shadow:
+    inset 0 1px 0 rgba(244, 239, 220, 0.07),
+    0 16px 36px rgba(0, 0, 0, 0.5);
+  padding: var(--bld-space-5);
+}
+.bld-shop::before {
+  /* chalk inner rule, like a marked-out pitch boundary */
+  content: "";
+  position: absolute;
+  inset: 7px;
+  pointer-events: none;
+  border: 1.5px dashed rgba(244, 239, 220, 0.13);
+  border-radius: calc(var(--bld-radius-ui) - 4px);
+}
+.bld-shop__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bld-space-3);
+  margin: calc(-1 * var(--bld-space-5));
+  margin-bottom: var(--bld-space-5);
+  padding: var(--bld-space-3) var(--bld-space-5);
+  border-bottom: 1px solid var(--bld-line);
+  background: rgba(4, 16, 11, 0.45);
+  border-radius: var(--bld-radius-ui) var(--bld-radius-ui) 0 0;
+}
+.bld-shop__section {
+  margin-bottom: var(--bld-space-3);
+}
+
+/* ------------------------------------------------------------
+   8 · DEATH / GLORY FRAMINGS
+   Full-screen verdict moments. Death: floodlights cut, red
+   emergency wash. Glory: everything gold the game has rationed.
+   ------------------------------------------------------------ */
+
+.bld-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--bld-space-4);
+  padding: var(--bld-space-10) var(--bld-space-5);
+  border-radius: var(--bld-radius-ui);
+  overflow: hidden;
+}
+.bld-screen__title {
+  margin: 0;
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-black);
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: var(--bld-text-display-xl);
+  line-height: var(--bld-leading-tight);
+  letter-spacing: var(--bld-tracking-display);
+}
+.bld-screen__verdict {
+  /* "o que faltou" — the one-line diagnosis */
+  margin: 0;
+  max-width: 36ch;
+  font-size: 1.05rem;
+  font-weight: var(--bld-weight-semibold);
+  line-height: var(--bld-leading-body);
+  color: var(--bld-ink-soft);
+}
+.bld-screen__scoreline {
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-size: var(--bld-text-display);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.bld-screen--death {
+  background:
+    radial-gradient(110% 80% at 50% 0%, rgba(226, 59, 48, 0.16), transparent 55%),
+    linear-gradient(180deg, var(--bld-red-950), var(--bld-field-950) 70%);
+  border: 1px solid var(--bld-red-700);
+  box-shadow: inset 0 0 60px rgba(142, 29, 24, 0.25), var(--bld-glow-danger);
+}
+.bld-screen--death .bld-screen__title {
+  color: var(--bld-red-300);
+  text-shadow: 0 0 24px rgba(226, 59, 48, 0.4);
+}
+.bld-screen--death .bld-screen__scoreline { color: var(--bld-flood-100); }
+
+.bld-screen--glory {
+  background:
+    radial-gradient(110% 80% at 50% 0%, rgba(234, 183, 72, 0.18), transparent 60%),
+    linear-gradient(180deg, #1a1406, var(--bld-field-950) 75%);
+  border: 1px solid var(--bld-gold-600);
+  box-shadow: inset 0 0 60px rgba(234, 183, 72, 0.15), var(--bld-glow-gold);
+}
+.bld-screen--glory .bld-screen__title {
+  color: var(--bld-gold-300);
+  text-shadow: 0 0 28px rgba(234, 183, 72, 0.5);
+}
+.bld-screen--glory .bld-screen__scoreline { color: var(--bld-gold-200); }
+
+/* ------------------------------------------------------------
+   9 · TOAST — card-firing popup ("😤 Catimba ativou!")
+   A poster chip that slams in from below, holds, leaves. The
+   legibility moment from spec §8 — must be readable in <1s.
+   ------------------------------------------------------------ */
+
+.bld-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bld-space-3);
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-heavy);
+  font-style: italic;
+  text-transform: uppercase;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--bld-field-950);
+  background: var(--bld-flood-100);
+  border-radius: var(--bld-radius-hard);
+  padding: 10px 18px 12px 12px;
+  transform: skewX(-6deg);
+  box-shadow: var(--bld-shadow-poster), var(--bld-glow-flood);
+}
+.bld-toast > * { transform: skewX(6deg); }
+.bld-toast__emoji { font-size: 1.4rem; font-style: normal; }
+.bld-toast__detail {
+  font-family: var(--bld-font-body);
+  font-weight: var(--bld-weight-bold);
+  font-style: normal;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--bld-field-600);
+}
+.bld-toast--gold {
+  background: linear-gradient(165deg, var(--bld-gold-200), var(--bld-gold-400));
+  color: var(--bld-gold-ink);
+  box-shadow: var(--bld-shadow-poster), var(--bld-glow-gold);
+}
+.bld-toast--gold .bld-toast__detail { color: var(--bld-gold-800); }
+.bld-toast.bld-anim {
+  animation: bld-toast-in var(--bld-dur-move) var(--bld-ease-snap) both;
+}
+@keyframes bld-toast-in {
+  from { opacity: 0; transform: skewX(-6deg) translateY(14px) scale(0.95); }
+  to   { opacity: 1; transform: skewX(-6deg) translateY(0) scale(1); }
+}
+
+/* ------------------------------------------------------------
+   10 · SQUAD STRIP — the XI as shirt tokens (Mercado footer)
+   ------------------------------------------------------------ */
+
+.bld-squad {
+  display: flex;
+  gap: var(--bld-space-2);
+  overflow-x: auto;
+  padding-bottom: var(--bld-space-1);
+}
+.bld-shirt {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 52px;
+  padding: 8px 6px 7px;
+  border-radius: var(--bld-radius-ui);
+  background: var(--bld-field-800);
+  border: 1px solid var(--bld-field-600);
+  transition: border-color var(--bld-dur-quick) var(--bld-ease-out);
+}
+.bld-shirt:hover { border-color: var(--bld-flood-500); }
+.bld-shirt__num {
+  font-family: var(--bld-font-display);
+  font-weight: var(--bld-weight-black);
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--bld-flood-100);
+}
+.bld-shirt__name {
+  font-size: 0.62rem;
+  font-weight: var(--bld-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bld-ink-muted);
+  max-width: 8ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bld-shirt--new {
+  border-color: var(--bld-gold-600);
+  box-shadow: 0 0 10px rgba(234, 183, 72, 0.25);
+}
+.bld-shirt--new .bld-shirt__num { color: var(--bld-gold-300); }
