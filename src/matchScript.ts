@@ -45,8 +45,8 @@ function scoreStr(userGoals: number, oppGoals: number): string {
   return `${userGoals} a ${oppGoals}`;
 }
 
-/** Resolve phrase tokens. */
-function resolve(
+/** Resolve phrase tokens. (Shared with the run broadcast — src/run/runMatchScript.ts.) */
+export function resolvePhrase(
   template: string,
   vars: Record<string, string>,
 ): string {
@@ -54,7 +54,7 @@ function resolve(
 }
 
 /** Pick a phrase variant deterministically from a pool. */
-function pickPhrase(pool: readonly string[], seed: string, index: number): string {
+export function pickPhrase(pool: readonly string[], seed: string, index: number): string {
   const h = hashSeed(`${seed}-phrase-${index}`) % pool.length;
   return pool[h]!;
 }
@@ -145,7 +145,7 @@ export function buildMatchScript(
   let oppScore = 0;
 
   // ── Kickoff beat (minute 1)
-  const kickoffText = resolve(
+  const kickoffText = resolvePhrase(
     pickPhrase(phrases.kickoff, seed, phraseIndex++),
     { marquee },
   );
@@ -246,7 +246,7 @@ export function buildMatchScript(
         userScore++;
         const score = scoreStr(userScore, oppScore);
         const template = pickPhrase(phrases.goal, seed, phraseIndex++);
-        const text = resolve(template, { scorer: event.scorer, score });
+        const text = resolvePhrase(template, { scorer: event.scorer, score });
         beats.push({
           minute: event.minute,
           type: "goal",
@@ -258,7 +258,7 @@ export function buildMatchScript(
         oppScore++;
         const score = scoreStr(userScore, oppScore);
         const template = pickPhrase(phrases.oppGoal, seed, phraseIndex++);
-        const text = resolve(template, { minute: String(event.minute), score });
+        const text = resolvePhrase(template, { minute: String(event.minute), score });
         beats.push({
           minute: event.minute,
           type: "oppGoal",
@@ -273,7 +273,7 @@ export function buildMatchScript(
       chanceIdx++;
       if (isOpp) {
         const template = pickPhrase(phrases.oppChance, seed, phraseIndex++);
-        const text = resolve(template, { gk: gkName });
+        const text = resolvePhrase(template, { gk: gkName });
         beats.push({
           minute: event.minute,
           type: "oppChance",
@@ -285,7 +285,7 @@ export function buildMatchScript(
           ? chancePool[hashSeed(`${seed}-chance-player-${phraseIndex}`) % chancePool.length]!
           : "nosso jogador";
         const template = pickPhrase(phrases.chance, seed, phraseIndex++);
-        const text = resolve(template, { player: playerName });
+        const text = resolvePhrase(template, { player: playerName });
         beats.push({
           minute: event.minute,
           type: "chance",
@@ -296,7 +296,7 @@ export function buildMatchScript(
     } else if (event.kind === "halftime") {
       const score = scoreStr(userScore, oppScore);
       const template = pickPhrase(phrases.halftime, seed, phraseIndex++);
-      const text = resolve(template, { score });
+      const text = resolvePhrase(template, { score });
       beats.push({
         minute: 45,
         type: "halftime",
@@ -306,7 +306,7 @@ export function buildMatchScript(
     } else if (event.kind === "lateDrama") {
       const score = scoreStr(userScore, oppScore);
       const template = pickPhrase(phrases.lateDrama, seed, phraseIndex++);
-      const text = resolve(template, { score });
+      const text = resolvePhrase(template, { score });
       beats.push({
         minute: event.minute,
         type: "lateDrama",
@@ -316,7 +316,7 @@ export function buildMatchScript(
     } else if (event.kind === "fulltime") {
       const score = scoreStr(userScore, oppScore);
       const template = pickPhrase(phrases.fulltime, seed, phraseIndex++);
-      const text = resolve(template, { score });
+      const text = resolvePhrase(template, { score });
       beats.push({
         minute: 90,
         type: "fulltime",
