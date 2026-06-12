@@ -5,18 +5,22 @@
  * dispatched through applyDecision; this file NEVER computes game logic.
  * Screens mirror RunState.phase:
  *
- *   (no run)      → Home
+ *   (no run)      → Home (first visit: 3-panel onboarding overlay)
  *   "shop"        → Mercado  ⇄  Pre-match (UI-level confrontation step)
- *   "match"       → Full-time (broadcast STUB — instant result + receipts)
- *   "dead"        → Death framing  → BORA DE NOVO (new seed)
- *   "champion"    → Glory framing  → BORA DE NOVO
+ *   "match"       → Transmissão (RunBroadcast) → receipts → Mercado
+ *   "dead"        → Transmissão → receipts → Death framing → BORA DE NOVO
+ *   "champion"    → Transmissão → receipts → Glory framing → BORA DE NOVO
  *
  * The in-progress run persists to localStorage as {seed, decisions log}
- * and resumes by pure replay (src/run/persistence.ts).
+ * and resumes by pure replay (src/run/persistence.ts). The broadcast is
+ * rebuilt deterministically from the replayed state, so a reload mid-match
+ * simply replays the transmissão (skippable as always).
  */
 
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { MercadoScreen } from "./MercadoScreen";
+import { RunBroadcast } from "./RunBroadcast";
+import { buildRunMatchScript } from "./run/runMatchScript";
 import { awayDebuff, computeRunSquadStrength } from "./run/playRunMatch";
 import { libertadoresOpponentMeta } from "./run/libertadores";
 import {
@@ -361,9 +365,17 @@ function MatchSummary({ run, record, stage }: { run: RunState; record: MatchReco
   );
 }
 
-function FullTimeScreen({ run, onContinue }: { run: RunState; onContinue: () => void }) {
+function FullTimeScreen({
+  run,
+  onContinue,
+  continueLabel,
+}: {
+  run: RunState;
+  onContinue: () => void;
+  continueLabel: string;
+}) {
   const record = run.matchHistory[run.matchHistory.length - 1]!;
-  const stage = run.competition.stages[run.stageIndex]!;
+  const stage = run.competition.stages.find((s) => s.id === record.stageId)!;
   const r = record.result;
   const verdict =
     r.outcome === "win"
@@ -380,19 +392,49 @@ function FullTimeScreen({ run, onContinue }: { run: RunState; onContinue: () => 
         <span className="bld-strap">
           <span>{verdict}</span>
         </span>
-        <span className="bld-label">transmissão completa em breve</span>
       </div>
       <MatchSummary run={run} record={record} stage={stage} />
       <div className="run-cta-row">
         <button
           type="button"
           className="bld-btn bld-btn--primary bld-btn--big"
+          data-testid="run-continue"
           onClick={onContinue}
         >
-          <span>Voltar ao Mercado ▶</span>
+          <span>{continueLabel}</span>
         </button>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Transmissão wrapper — builds the deterministic script for the last match
+// ---------------------------------------------------------------------------
+
+function MatchBroadcast({ run, onComplete }: { run: RunState; onComplete: () => void }) {
+  const record = run.matchHistory[run.matchHistory.length - 1]!;
+  const stage = run.competition.stages.find((s) => s.id === record.stageId)!;
+  const stageIndex = run.competition.stages.indexOf(stage);
+
+  const beats = useMemo(
+    () =>
+      buildRunMatchScript(record.result, record.cardFirings, stage.opponent, {
+        seed: `${run.seed}:match:${stageIndex}`,
+        stage,
+        squad: run.squad,
+      }),
+    [record, stage, stageIndex, run.seed, run.squad],
+  );
+
+  return (
+    <RunBroadcast
+      beats={beats}
+      compLabel={`Libertadores · ${stage.label}`}
+      userTag="BOL"
+      opponentTag={abbrev(stage.opponent.name)}
+      onComplete={onComplete}
+    />
   );
 }
 
@@ -475,8 +517,17 @@ function GloryScreen({ run, onRestart }: { run: RunState; onRestart: () => void 
 // Root
 // ---------------------------------------------------------------------------
 
+/** Post-kickoff UI sequence: transmissão → receipts → verdict screen. */
+type MatchView = "broadcast" | "receipts" | "verdict";
+
 export default function RunApp() {
   const [shell, setShell] = useState<ShellState>(loadShell);
+
+  // Keyed by (seed, matches played) so every new match restarts the sequence.
+  const [matchViewState, setMatchViewState] = useState<{ key: string; view: MatchView }>({
+    key: "",
+    view: "broadcast",
+  });
 
   const dispatch = useCallback((decision: RunDecision) => {
     setShell((prev) => {
@@ -518,6 +569,13 @@ export default function RunApp() {
 
   const { run, atPreMatch } = shell;
 
+  const matchKey = run ? `${run.seed}:${run.matchHistory.length}` : "";
+  const matchView = matchViewState.key === matchKey ? matchViewState.view : "broadcast";
+  const setMatchView = useCallback(
+    (view: MatchView) => setMatchViewState({ key: matchKey, view }),
+    [matchKey],
+  );
+
   let screen: React.ReactNode;
   if (!run) {
     screen = <HomeScreen onStart={startNewRun} />;
@@ -546,12 +604,28 @@ export default function RunApp() {
         />
       </>
     );
-  } else if (run.phase === "match") {
+  } else if (matchView === "broadcast" && run.matchHistory.length > 0) {
+    // match | dead | champion — the transmissão plays first, spoiler-free
+    // (no TopBar: the run score already includes this match's points).
+    screen = <MatchBroadcast run={run} onComplete={() => setMatchView("receipts")} />;
+  } else if (run.phase === "match" || matchView === "receipts") {
+    const continueLabel =
+      run.phase === "match"
+        ? "Voltar ao Mercado ▶"
+        : run.phase === "dead"
+          ? "E agora? ▶"
+          : "A TAÇA ▶";
     screen = (
       <>
         <TopBar run={run} />
         <StagePips run={run} />
-        <FullTimeScreen run={run} onContinue={() => dispatch({ type: "advance" })} />
+        <FullTimeScreen
+          run={run}
+          continueLabel={continueLabel}
+          onContinue={() =>
+            run.phase === "match" ? dispatch({ type: "advance" }) : setMatchView("verdict")
+          }
+        />
       </>
     );
   } else if (run.phase === "dead") {
